@@ -1,0 +1,24 @@
+Package: joml
+Type: Package
+Title: Utilities for Machine Learning
+Version: 0.1.0
+Author: Jean-Olivier Irisson
+Maintainer: Jean-Olivier Irisson <irisson@normalesup.org>
+Description: Create various stratified resamples to estimate the quality of ML
+    models, fit models to resamples in parallel, extract summary information about
+    fit quality, and predict based on fitted models. Currently works for 
+    xgboost models.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Depends:
+    dplyr
+Imports:
+    stats,
+    purrr,
+    modelr,
+    tidyr,
+    xgboost,
+    MLmetrics

@@ -19,6 +19,7 @@
 #' object beforehand if this is not the desired behaviour.
 #'
 #' @export
+#' @importFrom rlang .data
 #' @examples
 #' # compute summary across resamples
 #' resample_boot(mtcars, n=2) %>%
@@ -48,7 +49,7 @@ xgb_summarise_fit <- function(object, fns=list(mean=mean, sd=stats::sd, se=se)) 
     #     possible groups in object. There are groups when fitting on a
     #     `resamples_grid` object.
     dplyr::do({
-      purrr::map_dfr(.$model, function(x) {x$evaluation_log})
+      purrr::map_dfr(.data$model, function(x) {x$evaluation_log})
     })
 
   if( nrow(log) == 0 ) {
@@ -59,7 +60,7 @@ xgb_summarise_fit <- function(object, fns=list(mean=mean, sd=stats::sd, se=se)) 
     if (length(fns) != 0) {
       log <- log %>%
         # NB: preserve existing groups again
-        dplyr::group_by(dplyr::all_of("iter"), .add=TRUE) %>%
+        dplyr::group_by(.data$iter, .add=TRUE) %>%
         dplyr::summarise(dplyr::across(.fns=fns))
     }
   }

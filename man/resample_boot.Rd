@@ -4,10 +4,10 @@
 \alias{resample_boot}
 \title{Generate data resamples using bootstrap}
 \usage{
-resample_boot(.data, n = 10, ...)
+resample_boot(data, n = 10, ...)
 }
 \arguments{
-\item{.data}{data.frame, the data to resample.}
+\item{data}{data.frame, the data to resample.}
 
 \item{n}{integer, number of bootstraps.}
 

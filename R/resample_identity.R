@@ -3,7 +3,7 @@
 #' This is a dummy function, used to check the consistency of further computation.
 #' It just reshuffles the rows of the input data
 #'
-#' @param .data data.frame, the data to resample.
+#' @inheritParams resample_boot
 #' @param n integer, number of repetitions.
 #'
 #' @return A tibble with columns
@@ -17,14 +17,14 @@
 #' data.frame(rs$train[1])
 #' mtcars
 #' # = same except for the row order
-resample_identity <- function(.data, n=10) {
+resample_identity <- function(data, n=10) {
   if (n < 0) stop("The number of repetitions should be > 0.")
 
   # convert input data to data.frame for modelr::resample
-  data_df <- as.data.frame(.data)
+  data_df <- as.data.frame(data)
 
   # precompute some commonly used variables
-  nr <- nrow(.data)
+  nr <- nrow(data)
 
   ids <- purrr::map_dfr(1:n, function(i){
     dplyr::tibble(

@@ -4,10 +4,10 @@
 \alias{resample_identity}
 \title{Generate repeated resamples of the same data}
 \usage{
-resample_identity(.data, n = 10)
+resample_identity(data, n = 10)
 }
 \arguments{
-\item{.data}{data.frame, the data to resample.}
+\item{data}{data.frame, the data to resample.}
 
 \item{n}{integer, number of repetitions.}
 }

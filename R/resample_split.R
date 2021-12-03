@@ -1,7 +1,6 @@
 #' Generate train-val splits of the data
 #'
 #' @inheritParams resample_boot
-#' @param .data data.frame, the data to split.
 #' @param p in \[0,1\], the proportion of observations to use for training.
 #' @param n integer, number of repetitions of the split.
 #'
@@ -22,7 +21,7 @@
 #' # = variable number of occurrence of gear==4 in the training set
 #' sapply(rss$train, function(x) {sum(data.frame(x)$gear==4)})
 #' # = reliable number of gear==4 in the training set
-resample_split <- function(.data, ..., p=0.8, n=1) {
+resample_split <- function(data, ..., p=0.8, n=1) {
   if (p < 0 | p > 1) {
     stop("p should be in [0,1]")
   }
@@ -31,7 +30,7 @@ resample_split <- function(.data, ..., p=0.8, n=1) {
   }
 
   # convert input data to data.frame for modelr::resample
-  data_df <- as.data.frame(.data)
+  data_df <- as.data.frame(data)
 
   split_in_parts <- function(n, p) {
     n1 <- round(n*p)
@@ -41,7 +40,7 @@ resample_split <- function(.data, ..., p=0.8, n=1) {
 
   # compute the splits
   splits <- purrr::map_dfr(1:n, function(i) {
-    split_ids <- .data %>%
+    split_ids <- data %>%
       dplyr::group_by(...) %>%
       dplyr::transmute(.split=split_in_parts(dplyr::n(), p)) %>%
       dplyr::pull(".split")

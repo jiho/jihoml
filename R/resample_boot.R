@@ -1,6 +1,6 @@
 #' Generate data resamples using bootstrap
 #'
-#' @param .data data.frame, the data to resample.
+#' @param data data.frame, the data to resample.
 #' @param n integer, number of bootstraps.
 #' @param ... unquoted names of columns of .data to stratify by. Usually they are discrete variables.
 #'
@@ -26,18 +26,18 @@
 #' # = variable number of occurrence of gear==4 in the training set
 #' sapply(rss$train, function(x) {sum(data.frame(x)$gear==4)})
 #' # = reliable number of gear==4 in the training set
-resample_boot <- function(.data, n=10, ...) {
+resample_boot <- function(data, n=10, ...) {
   if (n < 0) stop("The number of bootstraps should be > 0.")
 
   # convert input data to data.frame for modelr::resample
-  data_df <- as.data.frame(.data)
+  data_df <- as.data.frame(data)
 
   # add a row index (avoiding name clashes as much as possible)
-  .data$..my_row_index.. <- 1:nrow(.data)
+  data$..my_row_index.. <- 1:nrow(data)
 
   # compute the bootstraps
   boots <- purrr::map_dfr(1:n, function(i) {
-    in_bag <- .data %>%
+    in_bag <- data %>%
       # stratify the boostrap
       dplyr::group_by(...) %>%
       # pick some rows in each stratum
@@ -47,7 +47,7 @@ resample_boot <- function(.data, n=10, ...) {
       unlist()
 
     # use indices not selected in the bootstrap above for out-of-bag validation
-    out_of_bag <- setdiff(.data$..my_row_index.., in_bag)
+    out_of_bag <- setdiff(data$..my_row_index.., in_bag)
 
     dplyr::tibble(
       train = list(modelr::resample(data=data_df, idx=in_bag)),

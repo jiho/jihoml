@@ -14,7 +14,6 @@ split_in_folds <- function(n, k) {
 
 #' Generate data resamples using cross validation
 #'
-#' @param .data data.frame, the data to resample.
 #' @inheritParams resample_boot
 #' @param k integer, the number of cross-validation folds.
 #' @param n integer, the number of times to repeat the creation of k folds
@@ -41,7 +40,7 @@ split_in_folds <- function(n, k) {
 #' # = variable number of occurrence of gear==4 in the training portion
 #' sapply(rss$train, function(x) {sum(data.frame(x)$gear==4)})
 #' # = reliable number of gear==4 in the training portion
-resample_cv <- function(.data, ..., k=3, n=1) {
+resample_cv <- function(data, ..., k=3, n=1) {
   # checks
   k <- round(k)
   if (k <= 1) stop("The number of folds should be > 1.")
@@ -51,12 +50,12 @@ resample_cv <- function(.data, ..., k=3, n=1) {
   if (n < 0) stop("The number of repetitions should be > 0.")
 
   # convert input data to data.frame for modelr::resample
-  data_df <- as.data.frame(.data)
+  data_df <- as.data.frame(data)
 
   rfolds <- purrr::map_dfr(1:n, function(r, ...) {
     # define which observation goes in which fold,
     # in a stratified manner (by ...)
-    fold_ids <- .data %>%
+    fold_ids <- data %>%
       dplyr::group_by(...) %>%
       dplyr::transmute(.fold=split_in_folds(n=dplyr::n(), k=k)) %>%
       dplyr::pull(".fold")

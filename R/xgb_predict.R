@@ -24,6 +24,7 @@
 #' - the original data if `add_data` is TRUE.
 #'
 #' @export
+#' @importFrom rlang .data
 #' @examples
 #' # fit models over 3 folds of cross-validation, with 6 rounds of boost each
 #' fits <- resample_cv(mtcars, k=3) %>%
@@ -67,21 +68,21 @@ xgb_predict <- function(object, newdata=NULL, ntrees=NULL,
     # NB: use do() here to preserve grouping in the input object
     dplyr::do({
       # for each resample (in the current group)
-      dplyr::rowwise(.) %>% dplyr::do({
+      dplyr::rowwise(.data) %>% dplyr::do({
         if (predict_val) {
           # with no new data, predict the validation data
-          newdata <- data.frame(.$val)[.$model$feature_names] %>% as.matrix()
+          newdata <- data.frame(.data$val)[.data$model$feature_names] %>% as.matrix()
           # and keep track of which rows of the original data that corresponds to
-          rows <- as.integer(.$val)
+          rows <- as.integer(.data$val)
         } else {
           # predict the new data in its entirety (and therefore all its rows)
-          newdata <- data.frame(newdata)[.$model$feature_names] %>% as.matrix()
+          newdata <- data.frame(newdata)[.data$model$feature_names] %>% as.matrix()
           rows <- 1:nrow(newdata)
         }
 
         # predict with the current model and the chosen number of boosting rounds
         pred <- stats::predict(
-          .$model,
+          .data$model,
           newdata=newdata,
           iteration_range=c(1,ntrees),
         )
@@ -91,13 +92,13 @@ xgb_predict <- function(object, newdata=NULL, ntrees=NULL,
       }) %>%
       dplyr::ungroup() %>%
       # make sure the data is in order
-      dplyr::arrange(..row)
+      dplyr::arrange(.data$..row)
     })
 
   # summarise the predictions for each data row, across resamples
   if (!is.null(fns)) {
     preds <- preds %>%
-      dplyr::group_by(..row, .add=TRUE) %>%
+      dplyr::group_by(.data$..row, .add=TRUE) %>%
       dplyr::summarise(dplyr::across(.f=fns))
   }
 
@@ -115,11 +116,11 @@ xgb_predict <- function(object, newdata=NULL, ntrees=NULL,
       data <- newdata
     }
     # add row indexes to the data
-    data$`..row` <- 1:nrow(data)
+    data$..row <- 1:nrow(data)
 
     # join it to the prediction
     preds <- dplyr::left_join(preds, data, by="..row") %>%
-      dplyr::select(-dplyr::all_of("..row"))
+      dplyr::select(-.data$..row)
   }
 
   return(preds)

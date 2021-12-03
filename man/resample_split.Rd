@@ -4,10 +4,10 @@
 \alias{resample_split}
 \title{Generate train-val splits of the data}
 \usage{
-resample_split(.data, ..., p = 0.8, n = 1)
+resample_split(data, ..., p = 0.8, n = 1)
 }
 \arguments{
-\item{.data}{data.frame, the data to split.}
+\item{data}{data.frame, the data to resample.}
 
 \item{...}{unquoted names of columns of .data to stratify by. Usually they are discrete variables.}
 

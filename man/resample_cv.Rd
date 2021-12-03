@@ -4,10 +4,10 @@
 \alias{resample_cv}
 \title{Generate data resamples using cross validation}
 \usage{
-resample_cv(.data, ..., k = 3, n = 1)
+resample_cv(data, ..., k = 3, n = 1)
 }
 \arguments{
-\item{.data}{data.frame, the data to resample.}
+\item{data}{data.frame, the data to resample.}
 
 \item{...}{unquoted names of columns of .data to stratify by. Usually they are discrete variables.}
 

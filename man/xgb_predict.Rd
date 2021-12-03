@@ -7,7 +7,7 @@
 xgb_predict(
   object,
   newdata = NULL,
-  ntrees = NULL,
+  niter = NULL,
   fns = list(mean = mean, sd = stats::sd, se = se),
   add_data = TRUE,
   ...
@@ -20,8 +20,8 @@ xgb_predict(
 for fitting (and possibly others). When NULL, predict the
 validation data for each resample.}
 
-\item{ntrees}{number of boosting trees to use in the prediction.
-Maps to the last bound of \code{iteration_range} in \code{xgboost::predict.xgb.Booster()}.}
+\item{niter}{number of boosting iterations to use in the prediction.
+Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Booster()}.}
 
 \item{fns}{a named list of summary functions, to compute for the predictions
 of each observation, across resamples. If NULL or an empty list,

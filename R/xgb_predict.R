@@ -4,8 +4,8 @@
 #' @param newdata data.frame to predict, with the same variables as those used
 #'                for fitting (and possibly others). When NULL, predict the
 #'                validation data for each resample.
-#' @param ntrees number of boosting trees to use in the prediction.
-#'               Maps to the last bound of `iteration_range` in `xgboost::predict.xgb.Booster()`.
+#' @param niter number of boosting iterations to use in the prediction.
+#'              Maps to the last bound of `iterationrange` in `xgboost::predict.xgb.Booster()`.
 #' @param fns a named list of summary functions, to compute for the predictions
 #'            of each observation, across resamples. If NULL or an empty list,
 #'            just return the full predictions.
@@ -52,7 +52,7 @@
 #'           max_depth=2, nrounds=30) %>%
 #'   xgb_predict(ntrees=20, fns=list(mean=mean))
 #' res %>% summarise(pred_metrics(pred_mean, mpg))
-xgb_predict <- function(object, newdata=NULL, ntrees=NULL,
+xgb_predict <- function(object, newdata=NULL, niter=NULL,
                         fns=list(mean=mean, sd=stats::sd, se=se),
                         add_data=TRUE, ...) {
   # checks
@@ -84,7 +84,7 @@ xgb_predict <- function(object, newdata=NULL, ntrees=NULL,
         pred <- stats::predict(
           .data$model,
           newdata=newdata,
-          iteration_range=c(1,ntrees),
+          iteration_range=c(1,niter),
         )
 
         # return the prediction and the corresponding row indexes

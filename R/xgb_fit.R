@@ -64,6 +64,7 @@ xgb_fit.resamples_grid <- function(object, cores=1, ...) {
 
   # recreate the full `resamples` object, with the added `model` column
   res <- do.call(dplyr::bind_rows, res) %>%
+    # and group it by parameter combination
     dplyr::group_by(dplyr::across(dplyr::all_of(param_names)))
   return(res)
 }

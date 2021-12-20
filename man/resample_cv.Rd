@@ -26,7 +26,7 @@ use \code{as.integer()}
 \item val   : an object of class modelr::resample with the validation set = the
 fold that is not in the training set.
 \item fold  : integer, the fold index.
-\item rep   : integer, the repetition index.
+\item repet : integer, the repetition index.
 }
 }
 \description{
@@ -34,7 +34,7 @@ Generate data resamples using cross validation
 }
 \examples{
 resample_cv(mtcars, k=3)
-resample_cv(mtcars, k=3, rep=2)
+resample_cv(mtcars, k=3, n=2)
 
 # stratified cross-val
 rs  <- resample_cv(mtcars, k=4)

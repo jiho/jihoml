@@ -21,7 +21,7 @@ A tibble with columns
 \item train : an object of class modelr::resample. The training data.
 \item val   : an object of class modelr::resample. The validation data (i.e. the
 rows of .data not selected in the training data).
-\item rep   : integer, the repetition number.
+\item repet : integer, the repetition number.
 }
 }
 \description{

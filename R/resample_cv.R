@@ -27,7 +27,7 @@ split_in_folds <- function(n, k) {
 #' - val   : an object of class modelr::resample with the validation set = the
 #'           fold that is not in the training set.
 #' - fold  : integer, the fold index.
-#' - rep   : integer, the repetition index.
+#' - repet : integer, the repetition index.
 #' @export
 #' @examples
 #' resample_cv(mtcars, k=3)
@@ -70,7 +70,7 @@ resample_cv <- function(data, ..., k=3, n=1) {
     })
 
     # record the repetition
-    folds$rep <- r
+    folds$repet <- r
 
     return(folds)
   }, ...=...)

@@ -8,7 +8,7 @@
 #' - train : an object of class modelr::resample. The training data.
 #' - val   : an object of class modelr::resample. The validation data (i.e. the
 #'           rows of .data not selected in the training data).
-#' - rep   : integer, the repetition number.
+#' - repet : integer, the repetition number.
 #'
 #' @export
 #' @examples
@@ -48,7 +48,7 @@ resample_split <- function(data, ..., p=0.8, n=1) {
     dplyr::tibble(
       train = list(modelr::resample(data=data_df, idx=which(split_ids==1))),
       val   = list(modelr::resample(data=data_df, idx=which(split_ids==2))),
-      rep = i
+      repet = i
     )
   })
 

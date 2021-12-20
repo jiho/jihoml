@@ -31,7 +31,7 @@ split_in_folds <- function(n, k) {
 #' @export
 #' @examples
 #' resample_cv(mtcars, k=3)
-#' resample_cv(mtcars, k=3, rep=2)
+#' resample_cv(mtcars, k=3, n=2)
 #'
 #' # stratified cross-val
 #' rs  <- resample_cv(mtcars, k=4)

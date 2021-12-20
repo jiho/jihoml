@@ -106,9 +106,9 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
   if (add_data) {
     # extract the data
     if (predict_val) {
-      # we're predicting from the validation data, which is extracted from the
+      # we're predicting the validation data, which is extracted from the
       # original data set, which was stored as:
-      data <- object$train[1][[1]]$data
+      data <- object$val[1][[1]]$data
       # NB: this is the original, unshuffled data;
       #     it is the same for every resample (so we get it from the first one)
     } else {

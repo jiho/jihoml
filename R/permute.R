@@ -1,0 +1,41 @@
+#' Create permutations of resamples
+#'
+#' Create permutation of the response variable in the training set of resamples, to assess the quality of a reference model fit.
+#'
+#' @examples
+#' # Split train and test, fit a reference model and compute its performance stats
+#' set.seed(123)
+#' rs <- resample_split(mtcars, p=0.7)
+#' rs_fitted <- rs %>% xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
+#'     eta=0.1, max_depth=6, nrounds=100)
+#' plot(val_rmse_mean ~ iter, data=xgb_summarise_fit(rs_fitted))
+#' pred <- xgb_predict(rs_fitted, niter=50, fns=c())
+#' ref_stats <- pred_metrics(pred$pred, pred$mpg)
+#' ref_stats
+#'
+#' # Now define permutations of the training set and compute the stats for each
+#' rs_perm <- replicate(rs, n=500) %>%
+#'   permute(rs, resp="mpg")
+#' rs_perm_fitted <- rs_perm %>% xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
+#'     eta=0.1, max_depth=6, nrounds=50)
+#' pred <- group_by(rs_perm_fitted, replic) %>%
+#'  # NB: group_by replicate number to keep it in the returned data.frame
+#'   xgb_predict(niter=50, fns=c())
+#' # compute the stats separately for each replicate
+#' perm_stats <- pred %>%
+#'   group_by(replic) %>%
+#'   summarise(pred_metrics(pred, mpg))
+#'
+#' # Compare the observed RMSE with the one from the permutations
+#' hist(perm_stats$RMSE, breaks=50)
+#' abline(v=ref_stats$RMSE, col="red")
+#' # and compute a p-value, through permutation
+#' p.value <- sum(perm_stats$RMSE <= ref_stats$RMSE) / nrow(perm_stats)
+#' p.value
+permute <- function(object, resp, ...) {
+  for (i in 1:nrow(object)) {
+    object$train[[i]] <- as.data.frame(object$train[[i]])
+    object$train[[i]][[resp]] <- sample(object$train[[i]][[resp]])
+  }
+  return(object)
+}

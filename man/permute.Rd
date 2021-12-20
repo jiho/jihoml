@@ -4,7 +4,15 @@
 \alias{permute}
 \title{Create permutations of resamples}
 \usage{
-permute(object, resp, ...)
+permute(object, resp)
+}
+\arguments{
+\item{object}{of class resamples, created by a \verb{resample_***()} function.}
+
+\item{resp}{name of the response variable.}
+}
+\value{
+The input object in which the training set of each row is now a data.frame where the response variable column has been shuffled. NB: This function therefore turns the \code{train} column from type \code{resample} to an actual \code{data.frame}, which takes more memory.
 }
 \description{
 Create permutation of the response variable in the training set of resamples, to assess the quality of a reference model fit.

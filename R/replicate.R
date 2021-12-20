@@ -5,12 +5,15 @@
 #' @param object of class resamples, created by a `resample_***()` function.
 #' @param n number of times to replicate
 #'
+#' @returns The input object with each row replicated `n` times and a new column `replic` giving the replicate number.
+#'
+#' @export
 #' @examples
 #' rs <- resample_split(mtcars, p=0.7)
 #' replicate(rs, n=5)
 #' rs <- resample_cv(mtcars, k=3, n=2)
 #' replicate(rs, n=3)
-replicate <- function(object, n, ...) {
+replicate <- function(object, n) {
   # replicate the rows
   n_resamples <- nrow(object)
   x <- object[rep(1:n_resamples, each=n),]

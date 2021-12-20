@@ -2,6 +2,12 @@
 #'
 #' Create permutation of the response variable in the training set of resamples, to assess the quality of a reference model fit.
 #'
+#' @param object of class resamples, created by a `resample_***()` function.
+#' @param resp name of the response variable.
+#'
+#' @returns The input object in which the training set of each row is now a data.frame where the response variable column has been shuffled. NB: This function therefore turns the `train` column from type `resample` to an actual `data.frame`, which takes more memory.
+#'
+#' @export
 #' @examples
 #' # Split train and test, fit a reference model and compute its performance stats
 #' set.seed(123)
@@ -32,10 +38,11 @@
 #' # and compute a p-value, through permutation
 #' p.value <- sum(perm_stats$RMSE <= ref_stats$RMSE) / nrow(perm_stats)
 #' p.value
-permute <- function(object, resp, ...) {
+permute <- function(object, resp) {
   for (i in 1:nrow(object)) {
     object$train[[i]] <- as.data.frame(object$train[[i]])
     object$train[[i]][[resp]] <- sample(object$train[[i]][[resp]])
+    # TODO make it work with multiple responses.
   }
   return(object)
 }

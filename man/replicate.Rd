@@ -4,12 +4,15 @@
 \alias{replicate}
 \title{Replicate each row of a resamples object}
 \usage{
-replicate(object, n, ...)
+replicate(object, n)
 }
 \arguments{
 \item{object}{of class resamples, created by a \verb{resample_***()} function.}
 
 \item{n}{number of times to replicate}
+}
+\value{
+The input object with each row replicated \code{n} times and a new column \code{replic} giving the replicate number.
 }
 \description{
 This is useful to test the replicability of a modelling pipeline or to prepare for permutations.

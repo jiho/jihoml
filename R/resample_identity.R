@@ -1,7 +1,7 @@
 #' Generate repeated resamples of the same data
 #'
 #' This is a dummy function, used to check the consistency of further computation.
-#' It just reshuffles the rows of the input data
+#' It just reshuffles the rows of the input data.
 #'
 #' @inheritParams resample_boot
 #' @param n integer, number of repetitions.
@@ -13,9 +13,10 @@
 #'
 #' @export
 #' @examples
-#' rs <- resample_identity(mtcars, n=1)
+#' rs <- resample_identity(mtcars, n=3)
+#' rs
 #' data.frame(rs$train[1])
-#' mtcars
+#' data.frame(rs$train[2])
 #' # = same except for the row order
 resample_identity <- function(data, n=10) {
   if (n < 0) stop("The number of repetitions should be > 0.")

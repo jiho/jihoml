@@ -21,11 +21,12 @@ A tibble with columns
 }
 \description{
 This is a dummy function, used to check the consistency of further computation.
-It just reshuffles the rows of the input data
+It just reshuffles the rows of the input data.
 }
 \examples{
-rs <- resample_identity(mtcars, n=1)
+rs <- resample_identity(mtcars, n=3)
+rs
 data.frame(rs$train[1])
-mtcars
+data.frame(rs$train[2])
 # = same except for the row order
 }

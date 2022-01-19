@@ -2,7 +2,7 @@
 % Please edit documentation in R/partials.R
 \name{partials}
 \alias{partials}
-\title{Compute Univariate Partial Dependence}
+\title{Compute univariate partial dependence for each resample}
 \usage{
 partials(object, expl, cores = 1, ...)
 }
@@ -26,9 +26,13 @@ continuous explanatory variables.
 }
 \value{
 The input object with a new column called \code{partial} containing a
-data.frame with the average prediction of the model (column \code{yhat}) for a
-given value (column \code{value}) of each explanatory variable (column
-\code{variable}).
+data.frame with columns:
+\itemize{
+\item \code{variable}: the variable whose dependence to is computed;
+\item \code{value}: the value of the variable at which the model marginal effects
+are computed.
+\item \code{yhat}: the average prediction of the model for this value.
+}
 }
 \description{
 Compute the partial dependence functions (i.e. marginal effects) for each
@@ -53,8 +57,12 @@ prediction of the model for this value of the target variable.
 m <- resample_boot(mtcars, 5) \%>\%
   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
     eta=0.1, max_depth=4, nrounds=20)
-# compute the 5 partial dependence and plot them
+# assess variable importance
+importance(m) \%>\% summarise_importance()
+
+# compute the partial dependence to the two most relevant variables
 m <- partials(m, expl=c("hp", "cyl"))
+# and plot them for each resample
 plot_partials(m, fns=NULL)
 # do the same with a finer grid
 m <- partials(m, expl=c("hp", "cyl"), grid.resolution=50)
@@ -62,9 +70,17 @@ plot_partials(m, fns=NULL)
 # or along quantiles
 m <- partials(m, expl=c("hp", "cyl"), quantiles=TRUE, probs=0:20/20)
 plot_partials(m, fns=NULL)
+
+# compute mean+/-sd among resamples
+summarise_partials(m)
+plot_partials(m)
+# do the same with median+/-mad
+summarise_partials(m, fns=list(location=median, spread=mad))
+plot_partials(m, fns=list(location=median, spread=mad))
 }
 \seealso{
 Other partial dependence plots functions: 
-\code{\link{plot_partials}()}
+\code{\link{plot_partials}()},
+\code{\link{summarise_partials}()}
 }
 \concept{partial dependence plots functions}

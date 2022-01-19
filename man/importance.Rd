@@ -2,7 +2,7 @@
 % Please edit documentation in R/importance.R
 \name{importance}
 \alias{importance}
-\title{Compute variable importance}
+\title{Compute variable importance for each resample}
 \usage{
 importance(object, cores = 1, ...)
 }
@@ -17,7 +17,7 @@ importance(object, cores = 1, ...)
 A data.frame with variables and their importance metric.
 }
 \description{
-Compute variable importance
+Compute variable importance for each resample
 }
 \examples{
 # fit a model on five bootstraps
@@ -26,13 +26,16 @@ m <- resample_boot(mtcars, 5) \%>\%
     eta=0.1, max_depth=4, nrounds=20)
 # compute variable importance for each model
 m <- importance(m)
-# look at importance for the first model
+# look at importance for the first resample
 m$importance[[1]]
-# plot the average importance
+# summarise across resamples
+summarise_importance(m)
+# plot the summarised importance
 plot_importance(m)
 }
 \seealso{
 Other variable importance functions: 
-\code{\link{plot_importance}()}
+\code{\link{plot_importance}()},
+\code{\link{summarise_importance}()}
 }
 \concept{variable importance functions}

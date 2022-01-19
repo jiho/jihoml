@@ -1,4 +1,4 @@
-#' Compute Univariate Partial Dependence
+#' Compute univariate partial dependence for each resample
 #'
 #' Compute the partial dependence functions (i.e. marginal effects) for each
 #' model in a resample.
@@ -32,9 +32,12 @@
 #'   prediction of the model for this value of the target variable.
 #'
 #' @returns The input object with a new column called `partial` containing a
-#'   data.frame with the average prediction of the model (column `yhat`) for a
-#'   given value (column `value`) of each explanatory variable (column
-#'   `variable`).
+#'   data.frame with columns:
+#'
+#'   - `variable`: the variable whose dependence to is computed;
+#'   - `value`: the value of the variable at which the model marginal effects
+#'   are computed.
+#'   - `yhat`: the average prediction of the model for this value.
 #'
 #' @export
 #' @family partial dependence plots functions
@@ -43,8 +46,12 @@
 #' m <- resample_boot(mtcars, 5) %>%
 #'   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
 #'     eta=0.1, max_depth=4, nrounds=20)
-#' # compute the 5 partial dependence and plot them
+#' # assess variable importance
+#' importance(m) %>% summarise_importance()
+#'
+#' # compute the partial dependence to the two most relevant variables
 #' m <- partials(m, expl=c("hp", "cyl"))
+#' # and plot them for each resample
 #' plot_partials(m, fns=NULL)
 #' # do the same with a finer grid
 #' m <- partials(m, expl=c("hp", "cyl"), grid.resolution=50)
@@ -52,6 +59,13 @@
 #' # or along quantiles
 #' m <- partials(m, expl=c("hp", "cyl"), quantiles=TRUE, probs=0:20/20)
 #' plot_partials(m, fns=NULL)
+#'
+#' # compute mean+/-sd among resamples
+#' summarise_partials(m)
+#' plot_partials(m)
+#' # do the same with median+/-mad
+#' summarise_partials(m, fns=list(location=median, spread=mad))
+#' plot_partials(m, fns=list(location=median, spread=mad))
 partials <- function(object, expl, cores=1, ...) {
   # check that explanatory variables exist
   all_expl <- object$model[[1]]$feature_names
@@ -88,7 +102,8 @@ partials <- function(object, expl, cores=1, ...) {
   return(object)
 }
 
-#' Plot (and summarise) partial dependence plots
+
+#' Summarise partial dependence across resamples
 #'
 #' @param object an object output by `[partials()]`, which contains a `partial`
 #'   column.
@@ -96,7 +111,45 @@ partials <- function(object, expl, cores=1, ...) {
 #'   be used to compute the central location of the variable (e.g., mean,
 #'   median, etc.); another should be called `spread` and be used to compute the
 #'   spread around that location (e.g., sd, mad, etc.). When `fns` is `NULL`,
-#'   the partial dependence line for each model is plotted.
+#'   the partial dependence is just concatenated across resamples.
+#'
+#' @returns A data.frame with:
+#'   - `variable`: the variable whose dependence to is computed;
+#'   - `value`: the value of the variable at which the model marginal effects
+#'   are computed.
+#'   - `yhat` or `yhat_loc`+`yhat_spr`: the average prediction of the model for
+#'   this value. either as is or the summary of its location (`loc`) and spread
+#'   (`spr`) according to the functions in `fns`.
+#'
+#' @export
+#'
+#' @family partial dependence plots functions
+#' @inherit partials examples
+summarise_partials <- function(object, fns=list(location=mean, spread=stats::sd)) {
+  df <- dplyr::bind_rows(object$partial, .id="id") %>%
+    # force variable to be in the order they were specified when computing the pdp
+    # NB: allows to start by the most important variable
+    dplyr::mutate(variable=factor(variable, levels=unique(variable)))
+
+  if (!is.null(fns)) {
+    # check consistency
+    if ( any(! c("location", "spread") %in% names(fns)) ) {
+      stop("'fns' needs to have one element named 'location' and one element named 'spread'.")
+    }
+
+    # compute summaries
+    df <- df %>%
+      dplyr::group_by(variable, value) %>%
+      dplyr::summarise(yhat_loc=fns$location(yhat), yhat_spr=fns$spread(yhat), .groups="drop")
+  }
+
+  return(df)
+}
+
+
+#' Plot partial dependence plots
+#'
+#' @inheritParams summarise_partials
 #' @param rug boolean; whether to add a rug plot to show at which values of the
 #'   explanatory variables the partial dependence is computed. This is most
 #'   useful when partial dependence is computed at quantiles of the original
@@ -105,27 +158,15 @@ partials <- function(object, expl, cores=1, ...) {
 #' @returns A ggplot2 object.
 #'
 #' @export
-#' @family partial dependence plots functions
 #' @import ggplot2
-#' @examples
-#' # fit a model on five bootstraps
-#' m <- resample_boot(mtcars, 5) %>%
-#'   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
-#'     eta=0.1, max_depth=4, nrounds=20)
-#' # plot all five partial dependence lines
-#' partials(m, expl=c("hp", "cyl")) %>%
-#'   plot_partials(fns=NULL, rug=FALSE)
-#' # plot mean+/-sd among resamples, at given quantiles of the training data
-#' partials(m, expl=c("hp", "cyl"), quantiles=TRUE) %>%
-#'   plot_partials()
-#' # do the same with median+/-mad
-#' partials(m, expl=c("hp", "cyl"), quantiles=TRUE) %>%
-#'   plot_partials(fns=list(location=median, spread=mad))
+#'
+#' @family partial dependence plots functions
+#' @inherit partials examples
 plot_partials <- function(object, fns=list(location=mean, spread=stats::sd), rug=TRUE) {
-  df <- dplyr::bind_rows(object$partial, .id="id") %>%
-    # force variable to be in the order they were specified when computing the pdp
-    # NB: allows to start by the most important variable
-    dplyr::mutate(variable=factor(variable, levels=unique(variable)))
+  # extract the partial dependence
+  # either just concatenated if fns is NULL
+  # or summarised by fns
+  df <- summarise_partials(object, fns=fns)
 
   if (is.null(fns)) {
     # plot lines
@@ -133,22 +174,13 @@ plot_partials <- function(object, fns=list(location=mean, spread=stats::sd), rug
       geom_path(aes(x=value, y=yhat, group=id),
                 alpha=1/log(length(unique(df$id))+1))
     # NB: use a heuristic to find an appropriate transparency
-
+    # TODO use the .data pronoun to avoid the note in R CMD CHECK
+    #      https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   } else {
-    # check consistency
-    if ( any(! c("location", "spread") %in% names(fns)) ) {
-      stop("'fns' needs to have one element named 'location' and one element named 'spread'.")
-    }
-
-    # compute summaries
-    dfs <- df %>%
-      group_by(variable, value) %>%
-      summarise(loc=fns$location(yhat), spr=fns$spread(yhat), .groups="drop")
-
     # plot ribbon for spread and line for location
-    p <- ggplot(dfs) +
-      geom_ribbon(aes(x=value, ymin=loc-spr, ymax=loc+spr), alpha=0.4) +
-      geom_path(aes(x=value, y=loc))
+    p <- ggplot(df) +
+      geom_ribbon(aes(x=value, ymin=yhat_loc-yhat_spr, ymax=yhat_loc+yhat_spr), alpha=0.4) +
+      geom_path(aes(x=value, y=yhat_loc))
   }
 
   if (rug) {

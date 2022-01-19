@@ -71,9 +71,13 @@ partials <- function(object, expl, cores=1, ...) {
   all_expl <- object$model[[1]]$feature_names
   missing_expl <- setdiff(expl, all_expl)
   if (length(missing_expl) == 1) {
-    stop("Variable ", missing_expl, " is not among the variables used to fit the model: ", paste0(all_expl, collapse=", "))
+    stop("Variable ", missing_expl,
+         " is not among the variables used to fit the model: ",
+         paste0(all_expl, collapse=", "))
   } else if (length(missing_expl) > 1) {
-    stop("Variables ", paste0(missing_expl, collapse=","), " are not among the variables used to fit the model: ", paste0(all_expl, collapse=", "))
+    stop("Variables ", paste0(missing_expl, collapse=","),
+         " are not among the variables used to fit the model: ",
+         paste0(all_expl, collapse=", "))
   }
 
   # extract training data that is valid for all models

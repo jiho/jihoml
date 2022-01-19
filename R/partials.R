@@ -93,9 +93,8 @@ partials <- function(object, expl, cores=1, ...) {
       p <- pdp::partial(object$model[[i]], pred.var=v, train=train_data,
                         type="regression", plot=FALSE, ...)
       # reformat as data.frame
-      p <- data.frame(p)
-      names(p)[1] <- "value"
-      p$variable <- v
+      p <- data.frame(variable=v, p)
+      names(p)[2] <- "value"
       return(p)
     }, ...)
   }, mc.cores=cores, ...)

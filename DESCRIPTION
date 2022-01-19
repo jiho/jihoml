@@ -22,4 +22,5 @@ Imports:
     modelr,
     tidyr,
     xgboost,
-    MLmetrics
+    MLmetrics,
+    ggplot2

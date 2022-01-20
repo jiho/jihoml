@@ -39,7 +39,7 @@ m <- fit_one_xgb(object=rs,
 m$model[[1]]$params
 m <- fit_one_xgb(object=rs,
   resp="mpg", expl=c("cyl", "hp", "qsec"),
-  # pass hyperparamters inline, though ...
+  # pass hyperparamters inline, through ...
   eta=0.1, max_depth=4,
   nrounds=20
 )

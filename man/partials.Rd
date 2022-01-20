@@ -4,7 +4,7 @@
 \alias{partials}
 \title{Compute univariate partial dependence for each resample}
 \usage{
-partials(object, expl, cores = 1, ...)
+partials(object, expl, ...)
 }
 \arguments{
 \item{object}{an object output by \code{xgb_fit()}, which contains a \code{model}
@@ -12,8 +12,6 @@ column.}
 
 \item{expl}{a vector of explanatory variables to compute the partial
 dependence to.}
-
-\item{cores}{integer, number of cores to use for parallel computation.}
 
 \item{...}{passed to \code{\link[pdp:partial]{pdp::partial()}}. Arguments of particular relevance are:
 \itemize{

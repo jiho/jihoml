@@ -7,7 +7,6 @@
 #'   column.
 #' @param expl a vector of explanatory variables to compute the partial
 #'   dependence to.
-#' @param cores integer, number of cores to use for parallel computation.
 #' @param ... passed to [pdp::partial()]. Arguments of particular relevance are:
 #'
 #'   - `grid.resolution` : an integer giving the number of equally spaced points
@@ -66,7 +65,7 @@
 #' # do the same with median+/-mad
 #' summarise_partials(m, fns=list(location=median, spread=mad))
 #' plot_partials(m, fns=list(location=median, spread=mad))
-partials <- function(object, expl, cores=1, ...) {
+partials <- function(object, expl, ...) {
   # check that explanatory variables exist
   all_expl <- object$model[[1]]$feature_names
   missing_expl <- setdiff(expl, all_expl)
@@ -97,7 +96,7 @@ partials <- function(object, expl, cores=1, ...) {
       names(p)[2] <- "value"
       return(p)
     }, ...)
-  }, mc.cores=cores, ...)
+  }, mc.cores=1, ...)
 
   # store PDPs as new column in object
   object$partial <- pdps

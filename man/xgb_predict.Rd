@@ -21,7 +21,9 @@ for fitting (and possibly others). When NULL, predict the
 validation data for each resample.}
 
 \item{niter}{number of boosting iterations to use in the prediction.
-Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Booster()}.}
+Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Booster()}.
+\code{niter}=0 or NULL means use all boosting rounds. Other values
+are equivalent to what is set in \code{nrounds} in \code{\link[=xgb_fit]{xgb_fit()}}.}
 
 \item{fns}{a named list of summary functions, to compute for the predictions
 of each observation, across resamples. If NULL or an empty list,

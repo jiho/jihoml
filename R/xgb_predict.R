@@ -6,6 +6,8 @@
 #'                validation data for each resample.
 #' @param niter number of boosting iterations to use in the prediction.
 #'              Maps to the last bound of `iterationrange` in `xgboost::predict.xgb.Booster()`.
+#'              `niter`=0 or NULL means use all boosting rounds. Other values
+#'              are equivalent to what is set in `nrounds` in [`xgb_fit()`].
 #' @param fns a named list of summary functions, to compute for the predictions
 #'            of each observation, across resamples. If NULL or an empty list,
 #'            just return the full predictions.
@@ -81,10 +83,12 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
         }
 
         # predict with the current model and the chosen number of boosting rounds
+        # if the number of boosting rounds is not set, then use all (which is coded as 1)
+        if (is.null(niter)) {niter <- 1}
         pred <- stats::predict(
           .data$model,
           newdata=newdata,
-          iteration_range=c(1,niter),
+          iterationrange=c(1,niter),
         )
 
         # return the prediction and the corresponding row indexes

@@ -1,21 +1,22 @@
-#' Compute prediction quality metrics
+#' Compute regression quality metrics
 #'
-#' @param y_pred numeric vector of predictions
-#' @param y_true numeric vector of actual values
+#' @param pred numeric vector of predictions
+#' @param true numeric vector of actual values
 #'
 #' @returns a tibble with RMSE, MAE, R2, correlation R2, correlation R2 on log(n+1) transformed data
 #' @export
 #' @examples
 #' res <- resample_split(mtcars, p=0.8) %>%
 #'   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"), nrounds=100) %>%
-#'   xgb_predict(fns=c())
-#' pred_metrics(res$pred, res$mpg)
-pred_metrics <- function(y_pred, y_true) {
+#'   xgb_predict(fns=NULL)
+#' regression_metrics(res$pred, res$mpg)
+regression_metrics <- function(pred, true) {
   dplyr::tibble(
-    RMSE = MLmetrics::RMSE(y_pred, y_true),
-    MAE  = MLmetrics::MAE(y_pred, y_true),
-    R2   = MLmetrics::R2_Score(y_pred, y_true) * 100,
-    R2_correl     = stats::cor(y_pred, y_true)^2 * 100,
-    R2_correl_log = stats::cor(log1p(y_pred), log1p(y_true))^2 * 100
+    RMSE = MLmetrics::RMSE(pred, true),
+    MAE  = MLmetrics::MAE(pred, true),
+    R2   = MLmetrics::R2_Score(pred, true) * 100,
+    R2_correl     = stats::cor(pred, true)^2 * 100,
+    R2_correl_log = stats::cor(log1p(pred), log1p(true))^2 * 100
   )
 }
+pred_metrics <- regression_metrics

@@ -32,8 +32,7 @@
 #' )
 #' m$model[[1]]$params
 fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, ...) {
-  # checks
-  # TODO
+  # TODO Add checks for arguments
 
   # extract training set, in dMatrix form, for xgboost
   train  <- as.data.frame(object$train)

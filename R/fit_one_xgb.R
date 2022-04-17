@@ -35,7 +35,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, .
   # TODO Add checks for arguments
 
   # extract training set, in dMatrix form, for xgboost
-  train  <- as.data.frame(object$train)
+  train  <- as.data.frame(object$train, check.names=FALSE)
   dTrain <- xgboost::xgb.DMatrix(
     data =as.matrix(train[expl]),
     label=train[[resp]],
@@ -46,7 +46,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, .
 
   # do the same for the validation set, taking into the account the case when
   # it is missing
-  val <- as.data.frame(object$val)
+  val <- as.data.frame(object$val, check.names=FALSE)
   if (nrow(val) == 0) {
     val_list <- list()
   } else {

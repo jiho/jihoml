@@ -8,6 +8,11 @@
 #' @param params named list of parameters passed to `xgboost::xgb.train()`.
 #' @param nrounds number of boosting rounds (i.e. number of trees).
 #' @param verbose 0 = silent, 1 = display performance, 2 = more verbose.
+#' @param weight a vector of observation-level weights, one per line of the training set.
+#' @param nthread number of threads (cores) used to fir each model. This is set
+#' to one by default to avoid conflict with parallelisation per resample (in
+#' [`xgb_fit()`] which is more efficient). Set this to more than 1 when fitting
+#' only one model.
 #' @param ... other parameters passed to `xgboost::xgb.Train()``
 #'
 #' @returns The input object (a one line tibble of class `resamples`) with an
@@ -31,7 +36,8 @@
 #'   nrounds=20
 #' )
 #' m$model[[1]]$params
-fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, weight=NULL, ...) {
+fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
+                        weight=NULL, nthread=1, ...) {
   # TODO Add checks for arguments
 
   # extract training set, in dMatrix form, for xgboost
@@ -39,8 +45,9 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, w
   dTrain <- xgboost::xgb.DMatrix(
     data =as.matrix(train[expl]),
     label=train[[resp]],
-    # force mono-core here, we will parallelise at a higher level
-    nthread=1
+    # use mono-core here, by default
+    # we will parallelise at a higher level
+    nthread=nthread
   )
   if (!is.null(weight)) {
     xgboost::setinfo(dTrain, "weight", weight[as.integer(object$train[[1]])])
@@ -57,7 +64,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, w
       val = xgboost::xgb.DMatrix(
         data =as.matrix(val[expl]),
         label=val[[resp]],
-        nthread=1
+        nthread=nthread
       )
     )
   }
@@ -67,7 +74,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, w
     params=params, nrounds=nrounds,
     watchlist=val_list,
     verbose=verbose,
-    nthread=1,
+    nthread=nthread,
     ...
   )
 

@@ -20,7 +20,7 @@
 #' classification_report(res$pred, res$cyl)
 #' classification_report(res$pred, res$cyl, exclude=8)
 classification_report <- function(pred, true, exclude=NULL) {
-  cm <- confusion_matrix(true, pred) %>% as.matrix()
+  cm <- confusion_matrix(pred, true) %>% as.matrix()
 
   # basic stats
   n <- sum(cm) # number of instances

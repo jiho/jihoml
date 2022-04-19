@@ -31,7 +31,7 @@
 #'   nrounds=20
 #' )
 #' m$model[[1]]$params
-fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, ...) {
+fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, weight=NULL, ...) {
   # TODO Add checks for arguments
 
   # extract training set, in dMatrix form, for xgboost
@@ -42,6 +42,9 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0, .
     # force mono-core here, we will parallelise at a higher level
     nthread=1
   )
+  if (!is.null(weight)) {
+    xgboost::setinfo(dTrain, "weight", weight[as.integer(object$train[[1]])])
+  }
   # TODO allow resp and expl to be unquoted, like in select()
 
   # do the same for the validation set, taking into the account the case when

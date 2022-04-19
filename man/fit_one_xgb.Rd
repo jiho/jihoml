@@ -4,7 +4,16 @@
 \alias{fit_one_xgb}
 \title{Fit an xgboost model to \emph{one} \code{resamples} object}
 \usage{
-fit_one_xgb(object, resp, expl, params = list(), nrounds, verbose = 0, ...)
+fit_one_xgb(
+  object,
+  resp,
+  expl,
+  params = list(),
+  nrounds,
+  verbose = 0,
+  weight = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{of class resamples, created by a \verb{resample_***()} function.}
@@ -18,6 +27,8 @@ fit_one_xgb(object, resp, expl, params = list(), nrounds, verbose = 0, ...)
 \item{nrounds}{number of boosting rounds (i.e. number of trees).}
 
 \item{verbose}{0 = silent, 1 = display performance, 2 = more verbose.}
+
+\item{weight}{a vector of observation-level weights, one per line of the training set.}
 
 \item{...}{other parameters passed to `xgboost::xgb.Train()``}
 }

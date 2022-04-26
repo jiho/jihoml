@@ -2,9 +2,12 @@
 % Please edit documentation in R/confusion_matrix.R
 \name{confusion_matrix}
 \alias{confusion_matrix}
+\alias{cm}
 \title{Build a confusion matrix}
 \usage{
 confusion_matrix(pred, true)
+
+cm(pred, true)
 }
 \arguments{
 \item{pred}{vector of predicted classes.}
@@ -21,7 +24,7 @@ Build a confusion matrix
 \examples{
 res <- mutate(mtcars, cyl=factor(cyl)) \%>\%
   resample_split(p=0.5) \%>\%
-  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=210) \%>\%
+  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=20) \%>\%
   xgb_predict(fns=NULL)
 confusion_matrix(res$pred, res$cyl)
 }

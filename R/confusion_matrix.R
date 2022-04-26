@@ -9,7 +9,7 @@
 #' @examples
 #' res <- mutate(mtcars, cyl=factor(cyl)) %>%
 #'   resample_split(p=0.5) %>%
-#'   xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=210) %>%
+#'   xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=20) %>%
 #'   xgb_predict(fns=NULL)
 #' confusion_matrix(res$pred, res$cyl)
 confusion_matrix <- function(pred, true) {
@@ -17,7 +17,7 @@ confusion_matrix <- function(pred, true) {
   class(cm) <- c("cm", class(cm))
   return(cm)
 }
-#' @describeIn confusion_matrix
+#' @rdname confusion_matrix
 # shortcut
 cm <- confusion_matrix
 
@@ -32,7 +32,7 @@ cm <- confusion_matrix
 #' @examples
 #' res <- mutate(mtcars, cyl=factor(cyl)) %>%
 #'   resample_split(p=0.5) %>%
-#'   xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=210) %>%
+#'   xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=20) %>%
 #'   xgb_predict(fns=NULL)
 #' plot(confusion_matrix(res$pred, res$cyl))
 plot.cm <- function(x, trans="log1p") {

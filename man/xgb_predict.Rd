@@ -8,7 +8,7 @@ xgb_predict(
   object,
   newdata = NULL,
   niter = NULL,
-  fns = list(mean = mean, sd = stats::sd, se = se),
+  fns = "auto",
   add_data = TRUE,
   ...
 )
@@ -25,9 +25,11 @@ Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Bo
 \code{niter}=0 or NULL means use all boosting rounds. Other values
 are equivalent to what is set in \code{nrounds} in \code{\link[=xgb_fit]{xgb_fit()}}.}
 
-\item{fns}{a named list of summary functions, to compute for the predictions
-of each observation, across resamples. If NULL or an empty list,
-just return the full predictions.}
+\item{fns}{a named list of summary functions, to compute over the predictions
+of each observation, across resamples. If NULL, return all
+predictions. If "auto", the default, choose a function appropriate
+for the type of response variable: \code{\link[base:mean]{base::mean()}} for a numeric,
+continuous variable; \code{\link[=majority_vote]{majority_vote()}} for a factor.}
 
 \item{add_data}{boolean, whether to add the original data to the output
 (defaults to TRUE which is practical to compute performance
@@ -53,30 +55,66 @@ or
 Predict from an xgboost model at a given number of rounds, across resamples
 }
 \examples{
-# fit models over 3 folds of cross-validation, with 6 rounds of boost each
-fits <- resample_cv(mtcars, k=3) \%>\%
+## Regression
+
+# fit models over 4 folds of cross-validation, repeated 3 times
+fits <- resample_cv(mtcars, k=4, n=3) \%>\%
   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
           eta=0.1, max_depth=2, nrounds=30)
-# compute the average predicted mpg over the 100 bootstraps, with 3 trees
-res <- xgb_predict(fits, ntrees=20, fns=list(mean=mean))
-res
+
+# compute the predicted mpg, with 20 trees only, and, by default average
+# across the 3 repetitions
+res <- xgb_predict(fits, niter=20)
+head(res)
+
 # check that we have predicted all items in the dataset (should always be the
 # case with cross validation)
 nrow(res)
 nrow(mtcars)
-# compute Mean Squared Error at this tree number
-sum(res$mpg-mean(res$mpg)^2)
-sum((res$pred_mean - res$mpg)^2)/nrow(res)
+# compute the Root Mean Squared Error
+sqrt( sum((res$pred_mean - res$mpg)^2) / nrow(res) )
+# compute several regression metrics
+regression_metrics(res$pred_mean, res$mpg)
 
-1 - sum((res$mpg-res$pred_mean)^2)/sum((res$mpg-mean(res$mpg))^2)
-cor(res$mpg, res$pred_mean)
-MLmetrics::R2_Score(y_pred=res$pred_mean, y_true=res$mpg)
+# examine the variability among the 3 repetitions of the cross validation
+# do not average over the repetitions => we get 3x32 lines
+res <- xgb_predict(fits, niter=20, fns=NULL)
+nrow(res)
+# compute the mean but also the standard deviation and error across repetitions
+res <- xgb_predict(fits, niter=20, fns=list(mean=mean, sd=sd, se=se))
+head(res)
 
 
-res <- resample_cv(mtcars, k=3) \%>\%
-  param_grid(eta=c(0.1, 0.5)) \%>\%
-  xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
-          max_depth=2, nrounds=30) \%>\%
-  xgb_predict(ntrees=20, fns=list(mean=mean))
-res \%>\% summarise(pred_metrics(pred_mean, mpg))
+##  Classification
+
+# fit models over 4 folds of cross-validation, repeated 3 times
+mtcarsf <- mutate(mtcars, cyl=factor(cyl))
+fits <- resample_cv(mtcarsf, k=4, n=3) \%>\%
+  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"),
+          eta=0.1, max_depth=2, nrounds=30)
+
+# compute the predicted number of cylinders (cyl) but with only 15 of the 30
+# rounds; by default, use the majority vote across the 3 repetitions
+res <- xgb_predict(fits, niter=15)
+head(res)
+# compute accuracy
+sum(res$pred_maj == res$cyl) / nrow(res)
+# compute several global classification metrics
+classification_metrics(res$pred_maj, res$cyl)
+
+# use a different objective for classification
+fits <- resample_cv(mtcarsf, k=4, n=3) \%>\%
+  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"),
+          objective="multi:softprob",
+          eta=0.1, max_depth=2, nrounds=30)
+# because the objective is softprob, we predict the probability for each level
+res <- xgb_predict(fits)
+head(res)
+# get the predicted class
+res$max_prob_idx <- res \%>\%
+  select(starts_with("pred_")) \%>\%
+  apply(1, which.max)
+res$pred_cyl <- refactor(res$max_prob_idx-1L, levels=levels(mtcarsf$cyl))
+head(res)
+# NB: refactor() uses 0-based indexing and needs integers, hence the -1L
 }

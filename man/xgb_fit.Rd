@@ -2,15 +2,45 @@
 % Please edit documentation in R/xgb_fit.R
 \name{xgb_fit}
 \alias{xgb_fit}
-\title{A generic function to fit an xgboost model}
+\alias{xgb_fit.resamples}
+\alias{xgb_fit.resamples_grid}
+\title{Fit an xgboost model for each row of a \code{resamples} object}
 \usage{
 xgb_fit(object, ...)
+
+\method{xgb_fit}{resamples}(object, cores = 1, ...)
+
+\method{xgb_fit}{resamples_grid}(object, cores = 1, ...)
 }
 \arguments{
-\item{object}{of class resamples.}
+\item{object}{of class \code{resamples} (created by a \verb{resample_***()} function) or
+of class \code{resamples_grid} (created by \code{param_grid()}).}
 
-\item{...}{passed to further methods.}
+\item{...}{passed to \code{fit_one_xgb()} and then later to \code{xgboost::xgb.Train()}}
+
+\item{cores}{integer, number of cores to use for parallel computation.}
+}
+\value{
+The input object (a tibble of class \code{resamples}) with an
+additional column called \code{model} containing the fitted model object.
 }
 \description{
-A generic function to fit an xgboost model
+Fit an xgboost model for each row of a \code{resamples} object
+}
+\examples{
+# regression
+resample_boot(mtcars, 3) \%>\%
+  xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
+    eta=0.1, max_depth=4, nrounds=20)
+
+resample_boot(mtcars, 2) \%>\%
+  param_grid(eta=c(0.1, 0.2)) \%>\%
+  xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
+    max_depth=4, nrounds=20)
+
+# classification
+mtcarsf <- mutate(mtcars, cyl=factor(cyl))
+resample_boot(mtcarsf, 3) \%>\%
+  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"),
+    eta=0.1, max_depth=4, nrounds=20)
 }

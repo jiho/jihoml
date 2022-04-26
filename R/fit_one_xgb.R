@@ -60,7 +60,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     levels <- levels(train[[resp]])
     num_class <- length(levels)
     # convert to integer for xgboost
-    train[[resp]] <- as.integer(train[[resp]]) - 1
+    train[[resp]] <- defactor(train[[resp]])
   } else {
     classif <- FALSE
     num_class <- NULL
@@ -84,7 +84,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     val_list <- list()
   } else {
     if (classif) {
-      val[[resp]] <- as.integer(val[[resp]]) - 1
+      val[[resp]] <- defactor(val[[resp]])
     }
     val_list <- list(
       val = xgboost::xgb.DMatrix(

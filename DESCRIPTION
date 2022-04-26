@@ -21,7 +21,7 @@ Imports:
     purrr,
     modelr,
     tidyr,
-    xgboost,
+    xgboost (>= 1.6.0),
     MLmetrics,
     pdp,
     ggplot2

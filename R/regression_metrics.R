@@ -19,4 +19,12 @@ regression_metrics <- function(pred, true) {
     R2_correl_log = stats::cor(log1p(pred), log1p(true))^2 * 100
   )
 }
-pred_metrics <- regression_metrics
+
+#' @export
+#' @section Deprecated:
+#' [`pred_metrics()`] is deprecated; use [`regression_metrics()`] instead.
+#' @rdname regression_metrics
+pred_metrics <- function(pred, true) {
+  .Deprecated("regression_metrics")
+  regression_metrics(pred, true)
+}

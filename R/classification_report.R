@@ -77,13 +77,15 @@ classification_report <- function(pred, true, exclude=NULL) {
 cr <- classification_report
 
 #' @rdname classification_report
-#' @param object output of [`classification_report()`]
+#' @param x output of [`classification_report()`].
+#' @param digits number of digits to display for each number in the report.
+#' @param ... passed to [`base::print()`].
 #' @export
-print.cr <- function(object, digits=3) {
-  out <- format(object, digits=digits)
-  out <- lapply(out, function(x) {
-    x[grepl("NA", x)] <- "-"
-    return(x)
+print.cr <- function(x, digits=3, ...) {
+  out <- format(x, digits=digits)
+  out <- lapply(out, function(y) {
+    y[grepl("NA", y)] <- "-"
+    return(y)
   }) %>% data.frame()
   n_head <- max(which(out$n == "-"))
   out <- rbind(

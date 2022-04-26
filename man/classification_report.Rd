@@ -10,7 +10,7 @@ classification_report(pred, true, exclude = NULL)
 
 cr(pred, true, exclude = NULL)
 
-\method{print}{cr}(object, digits = 3)
+\method{print}{cr}(x, digits = 3, ...)
 }
 \arguments{
 \item{pred}{vector of predicted classes.}
@@ -21,7 +21,11 @@ cr(pred, true, exclude = NULL)
 They are then marked by a \code{*}. This is typically used to exclude dominant
 classes that skew the average too much.}
 
-\item{object}{output of \code{\link[=classification_report]{classification_report()}}}
+\item{x}{output of \code{\link[=classification_report]{classification_report()}}.}
+
+\item{digits}{number of digits to display for each number in the report.}
+
+\item{...}{passed to \code{\link[base:print]{base::print()}}.}
 }
 \value{
 A data.frame with global and per class metrics.

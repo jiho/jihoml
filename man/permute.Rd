@@ -25,7 +25,7 @@ rs_fitted <- rs \%>\% xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
     eta=0.1, max_depth=6, nrounds=100)
 plot(val_rmse_mean ~ iter, data=xgb_summarise_fit(rs_fitted))
 pred <- xgb_predict(rs_fitted, niter=50, fns=c())
-ref_stats <- pred_metrics(pred$pred, pred$mpg)
+ref_stats <- regression_metrics(pred$pred, pred$mpg)
 ref_stats
 
 # Now define permutations of the training set and compute the stats for each
@@ -38,7 +38,7 @@ pred <- group_by(rs_perm_fitted, replic) \%>\%
 # compute the stats separately for each replicate
 perm_stats <- pred \%>\%
   group_by(replic) \%>\%
-  summarise(pred_metrics(pred, mpg))
+  summarise(regression_metrics(pred, mpg))
 
 # Compare the observed RMSE with the one from the permutations
 hist(perm_stats$RMSE, breaks=50)

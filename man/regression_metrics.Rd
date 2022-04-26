@@ -2,9 +2,12 @@
 % Please edit documentation in R/regression_metrics.R
 \name{regression_metrics}
 \alias{regression_metrics}
+\alias{pred_metrics}
 \title{Compute regression quality metrics}
 \usage{
 regression_metrics(pred, true)
+
+pred_metrics(pred, true)
 }
 \arguments{
 \item{pred}{numeric vector of predictions}
@@ -17,6 +20,11 @@ a tibble with RMSE, MAE, R2, correlation R2, correlation R2 on log(n+1) transfor
 \description{
 Compute regression quality metrics
 }
+\section{Deprecated}{
+
+\code{\link[=pred_metrics]{pred_metrics()}} is deprecated; use \code{\link[=regression_metrics]{regression_metrics()}} instead.
+}
+
 \examples{
 res <- resample_split(mtcars, p=0.8) \%>\%
   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"), nrounds=100) \%>\%

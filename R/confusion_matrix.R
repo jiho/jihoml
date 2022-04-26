@@ -25,6 +25,7 @@ cm <- confusion_matrix
 #'
 #' @param x a confusion matrix built by [`confusion_matrix()`].
 #' @param trans transformation function for the color scale.
+#' @param ... passed to [`base::plot()`].
 #'
 #' @returns A ggplot object showing a heatmap with true values in lines and
 #'   predicted values in columns.
@@ -35,7 +36,7 @@ cm <- confusion_matrix
 #'   xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"), nrounds=20) %>%
 #'   xgb_predict(fns=NULL)
 #' plot(confusion_matrix(res$pred, res$cyl))
-plot.cm <- function(x, trans="log1p") {
+plot.cm <- function(x, trans="log1p", ...) {
   as.data.frame(x) %>%
     ggplot() +
     geom_raster(aes(x=pred, y=true, alpha=Freq), fill="darkblue") +

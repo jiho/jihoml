@@ -31,21 +31,41 @@ during training. It gives the error metric as a function of the number of
 boosting rounds. Compute summary statistics over the various resamples.
 }
 \examples{
-# compute summary across resamples
-resample_boot(mtcars, n=2) \%>\%
+# compute summary of fit metrics across 5 resamples
+fit <- resample_boot(mtcars, n=5) \%>\%
   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
-          eta=0.1, max_depth=2, nrounds=10) \%>\%
-  xgb_summarise_fit(fns=list(mean=mean, sd=sd))
+          eta=0.2, max_depth=2, nrounds=10)
+fit_history <- xgb_summarise_fit(fit, fns=list(mean=mean, sd=sd))
+plot(val_rmse_mean ~ iter, data=fit_history)
+# this shows fitting is not finished, we should increase nrounds.
 
 # when using a grid of parameters, the corresponding values of the parameters
 # are preserved in the output.
-x <- resample_boot(mtcars, n=2) \%>\%
+fit_history <- resample_boot(mtcars, n=5) \%>\%
   param_grid(eta=c(0.5, 1)) \%>\%
   xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
           max_depth=2, nrounds=10) \%>\%
   xgb_summarise_fit()
-print(x)
+print(fit_history)
 \dontrun{
-ggplot(x) + geom_path(aes(x=iter, y=val_rmse_mean, colour=factor(eta)))
+# then the fit history can be plotted separately for each, to choose the best
+ggplot(fit_history) +
+  geom_ribbon(aes(
+    x=iter,
+    ymin=val_rmse_mean-val_rmse_sd,
+    ymax=val_rmse_mean+val_rmse_sd,
+    fill=factor(eta)
+  ), alpha=0.5) +
+  geom_path(aes(x=iter, y=val_rmse_mean, colour=factor(eta)))
 }
+
+# the same is true for classification of course
+mtcarsf <- mutate(mtcars, cyl=factor(cyl))
+fit_history <- resample_boot(mtcarsf, n=5) \%>\%
+  xgb_fit(resp="cyl", expl=c("mpg", "hp", "qsec"),
+          objective="multi:softprob",
+          eta=0.6, max_depth=2, nrounds=10) \%>\%
+  xgb_summarise_fit(fns=list(mean=mean, sd=sd))
+plot(val_mlogloss_mean ~ iter, data=fit_history, type="b")
+# -> We're over-fitting
 }

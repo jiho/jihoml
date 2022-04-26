@@ -46,19 +46,31 @@ additional column called \code{model} containing the fitted model object.
 This is the "workhorse" function called by the different methods of xgb_fit.
 }
 \examples{
+# regression
 rs <- resample_identity(mtcars, 1)
 m <- fit_one_xgb(object=rs,
   resp="mpg", expl=c("cyl", "hp", "qsec"),
-  # pass hyperparameters as a list
+  eta=0.1, max_depth=4,
+  nrounds=20
+)
+m$model
+
+# classification
+mtcarsf <- mutate(mtcars, cyl=factor(cyl))
+rs <- resample_identity(mtcarsf, 1)
+m <- fit_one_xgb(object=rs,
+  resp="cyl", expl=c("mpg", "hp", "qsec"),
+  eta=0.1, max_depth=4,
+  nrounds=20
+)
+m$model
+
+# parameters can also be passed as a list
+m_list <- fit_one_xgb(object=rs,
+  resp="cyl", expl=c("mpg", "hp", "qsec"),
   params=list(eta=0.1, max_depth=4),
   nrounds=20
 )
 m$model[[1]]$params
-m <- fit_one_xgb(object=rs,
-  resp="mpg", expl=c("cyl", "hp", "qsec"),
-  # pass hyperparamters inline, through ...
-  eta=0.1, max_depth=4,
-  nrounds=20
-)
-m$model[[1]]$params
+m_list$model[[1]]$params
 }

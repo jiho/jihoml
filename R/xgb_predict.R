@@ -83,12 +83,12 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
         }
 
         # predict with the current model and the chosen number of boosting rounds
-        # if the number of boosting rounds is not set, then use all (which is coded as 1)
-        if (is.null(niter)) {niter <- 1}
+        # if the number of boosting rounds is not set, then use all
+        if (is.null(niter)) {niter <- 0}
         pred <- stats::predict(
           .data$model,
           newdata=newdata,
-          iterationrange=c(1,niter),
+          iterationrange=c(1,niter+1)
         )
 
         # return the prediction and the corresponding row indexes

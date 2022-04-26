@@ -39,7 +39,7 @@ only one model.}
 \item{...}{other parameters passed to `xgboost::xgb.Train()``}
 }
 \value{
-The input object (a one line tibble of class \code{resamples}) with an
+The input object (a tibble of class \code{resamples}) with an
 additional column called \code{model} containing the fitted model object.
 }
 \description{

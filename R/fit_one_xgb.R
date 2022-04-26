@@ -15,7 +15,7 @@
 #' only one model.
 #' @param ... other parameters passed to `xgboost::xgb.Train()``
 #'
-#' @returns The input object (a one line tibble of class `resamples`) with an
+#' @returns The input object (a tibble of class `resamples`) with an
 #' additional column called `model` containing the fitted model object.
 #'
 #' @importFrom dplyr `%>%`

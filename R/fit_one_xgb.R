@@ -42,6 +42,17 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
 
   # extract training set, in dMatrix form, for xgboost
   train  <- as.data.frame(object$train, check.names=FALSE)
+  if (is.factor(train[[resp]])) {
+    # we are in classification mode, record additional things
+    classif <- TRUE
+    levels <- levels(train[[resp]])
+    num_class <- length(levels)
+    # convert to integer for xgboost
+    train[[resp]] <- as.integer(train[[resp]]) - 1
+  } else {
+    classif <- FALSE
+    num_class <- NULL
+  }
   dTrain <- xgboost::xgb.DMatrix(
     data =as.matrix(train[expl]),
     label=train[[resp]],
@@ -60,6 +71,9 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
   if (nrow(val) == 0) {
     val_list <- list()
   } else {
+    if (classif) {
+      val[[resp]] <- as.integer(val[[resp]]) - 1
+    }
     val_list <- list(
       val = xgboost::xgb.DMatrix(
         data =as.matrix(val[expl]),
@@ -71,12 +85,15 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
 
   # train the model on the training set, with the provided params
   m <- xgboost::xgb.train(data=dTrain,
-    params=params, nrounds=nrounds,
+    params=c(params, num_class=num_class), nrounds=nrounds,
     watchlist=val_list,
     verbose=verbose,
     nthread=nthread,
     ...
   )
+  if (classif) {
+    m$levels <- levels
+  }
 
   # add model to this `resamples` object
   object$model <- list(m)

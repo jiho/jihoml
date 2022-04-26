@@ -23,7 +23,7 @@ classification_report <- function(pred, true, exclude=NULL) {
   cm <- confusion_matrix(pred=pred, true=true) %>% as.matrix()
 
   # basic stats
-  n <- sum(cm) # number of instances
+  n <- sum(cm)   # number of instances
   nc <- nrow(cm) # number of classes
   diag <- diag(cm) # number of correctly classified instances per class
   rowsums <- apply(cm, 1, sum) # number of instances per class

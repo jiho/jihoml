@@ -137,6 +137,7 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
           iterationrange=c(1,niter+1),
           reshape=TRUE
         )
+        # TODO deal with nthreads etc. here too
 
         if (!is.null(.data$model$levels) & is.null(dim(pred))) {
           # classification with softmax objective

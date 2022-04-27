@@ -26,7 +26,7 @@ Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Bo
 are equivalent to what is set in \code{nrounds} in \code{\link[=xgb_fit]{xgb_fit()}}.}
 
 \item{fns}{a named list of summary functions, to compute over the predictions
-of each observation, across resamples. If NULL, return all
+of each observation, across resamples (when there are more than one). If NULL, return all
 predictions. If "auto", the default, choose a function appropriate
 for the type of response variable: \code{\link[base:mean]{base::mean()}} for a numeric,
 continuous variable; \code{\link[=majority_vote]{majority_vote()}} for a factor.}

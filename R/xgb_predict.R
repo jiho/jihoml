@@ -9,7 +9,7 @@
 #'              `niter`=0 or NULL means use all boosting rounds. Other values
 #'              are equivalent to what is set in `nrounds` in [`xgb_fit()`].
 #' @param fns a named list of summary functions, to compute over the predictions
-#'            of each observation, across resamples. If NULL, return all
+#'            of each observation, across resamples (when there are more than one). If NULL, return all
 #'            predictions. If "auto", the default, choose a function appropriate
 #'            for the type of response variable: [`base::mean()`] for a numeric,
 #'            continuous variable; [`majority_vote()`] for a factor.
@@ -156,7 +156,7 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
       dplyr::arrange(.data$..row)
     })
 
-  if (!is.null(fns)) {
+  if (!is.null(fns) & nrow(object) > 1) {
     preds <- dplyr::group_by(preds, .data$..row, .add=TRUE)
     if (is.list(fns)) {
       # use the specified functions

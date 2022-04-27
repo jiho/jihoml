@@ -13,10 +13,8 @@ xgb_fit(object, cores = 1, threads = 1, ...)
 \method{xgb_fit}{resamples_grid}(object, cores = 1, threads = 1, ...)
 }
 \arguments{
-\item{object}{of class \code{resamples} (created by a \verb{resample_***()} function) or
-of class \code{resamples_grid} (created by \code{param_grid()}).}
-
-\item{...}{passed to \code{fit_one_xgb()} and then later to \code{xgboost::xgb.Train()}}
+\item{object}{of class \code{resamples} (created by a \verb{resample_***()} function)
+or of class \code{resamples_grid} (created by \code{param_grid()}).}
 
 \item{cores}{integer, number of cores to use for parallel computation.}
 
@@ -25,10 +23,13 @@ of class \code{resamples_grid} (created by \code{param_grid()}).}
 small resamples, parallelising over cores is likely more efficient. When
 fitting few (sometimes even one) model or when each model is very big,
 parallelising each fit through threads is likely more efficient.}
+
+\item{...}{passed to \code{fit_one_xgb()} and then later to
+\code{xgboost::xgb.Train()}.}
 }
 \value{
-The input object (a tibble of class \code{resamples}) with an
-additional column called \code{model} containing the fitted model object.
+The input object (a tibble of class \code{resamples}) with an additional
+column called \code{model} containing the fitted model object.
 }
 \description{
 Fit an xgboost model for each row of a \code{resamples} object

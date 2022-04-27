@@ -1,31 +1,31 @@
 #' Predict from an xgboost model at a given number of rounds, across resamples
 #'
-#' @param object an object output by `xgb_fit()`, which contains a `model` column.
+#' @param object an object output by `xgb_fit()`, which contains a `model`
+#'   column.
 #' @param newdata data.frame to predict, with the same variables as those used
-#'                for fitting (and possibly others). When NULL, predict the
-#'                validation data for each resample.
-#' @param niter number of boosting iterations to use in the prediction.
-#'              Maps to the last bound of `iterationrange` in `xgboost::predict.xgb.Booster()`.
-#'              `niter`=0 or NULL means use all boosting rounds. Other values
-#'              are equivalent to what is set in `nrounds` in [`xgb_fit()`].
+#'   for fitting (and possibly others). When NULL, predict the validation data
+#'   for each resample.
+#' @param niter number of boosting iterations to use in the prediction. Maps to
+#'   the last bound of `iterationrange` in `xgboost::predict.xgb.Booster()`.
+#'   `niter`=0 or NULL means use all boosting rounds. Other values are
+#'   equivalent to what is set in `nrounds` in [`xgb_fit()`].
 #' @param fns a named list of summary functions, to compute over the predictions
-#'            of each observation, across resamples (when there are more than one). If NULL, return all
-#'            predictions. If "auto", the default, choose a function appropriate
-#'            for the type of response variable: [`base::mean()`] for a numeric,
-#'            continuous variable; [`majority_vote()`] for a factor.
+#'   of each observation, across resamples (when there are more than one). If
+#'   NULL, return all predictions. If "auto", the default, choose a function
+#'   appropriate for the type of response variable: [`base::mean()`] for a
+#'   numeric, continuous variable; [`majority_vote()`] for a factor.
 #' @param add_data boolean, whether to add the original data to the output
-#'                 (defaults to TRUE which is practical to compute performance
-#'                 metrics).
+#'   (defaults to TRUE which is practical to compute performance metrics).
 #' @param ... passed to xgboost::predict.xgb.Booster()
 #'
-#' @returns A tibble with columns
-#' - the grouping columns in `object`. Ungroup the object before `xgb_predict()`
-#'   if this is not the desired behaviour.
-#' - the predictions as
-#'    - `pred_***` where *** is a summary function (e.g. mean),
-#'    or
-#'    - `pred` when no summary function is chosen.
-#' - the original data if `add_data` is TRUE.
+#' @returns A tibble with the grouping columns in `object` (ungroup the object
+#'   before `xgb_predict()` if this is not the desired behaviour) and the
+#'   prediction as
+#'
+#'   - `pred_***` where *** is a summary function (e.g. mean), or
+#'
+#'   - `pred` when no summary function is chosen. - the original data if
+#'   `add_data` is TRUE.
 #'
 #' @export
 #' @importFrom rlang .data

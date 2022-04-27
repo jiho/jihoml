@@ -8,15 +8,16 @@
 #' @param params named list of parameters passed to `xgboost::xgb.train()`.
 #' @param nrounds number of boosting rounds (i.e. number of trees).
 #' @param verbose 0 = silent, 1 = display performance, 2 = more verbose.
-#' @param weight a vector of observation-level weights, one per line of the training set.
+#' @param weight a vector of observation-level weights, one per line of the
+#'   training set.
 #' @param threads number of paralel threads used to fit each model. This is set
 #'   to 1 by default to avoid conflict with parallelisation per resample (in
 #'   [`xgb_fit()`]), which is often more efficient. Set this to more than 1 when
 #'   fitting only one model.
 #' @param ... other parameters passed to `xgboost::xgb.Train()``
 #'
-#' @returns The input object (a tibble of class `resamples`) with an
-#' additional column called `model` containing the fitted model object.
+#' @returns The input object (a tibble of class `resamples`) with an additional
+#'   column called `model` containing the fitted model object.
 #'
 #' @importFrom dplyr `%>%`
 #' @export
@@ -65,6 +66,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     classif <- FALSE
     num_class <- NULL
   }
+
   dTrain <- xgboost::xgb.DMatrix(
     data =data.matrix(train[expl]),
     label=train[[resp]],

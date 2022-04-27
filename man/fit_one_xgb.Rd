@@ -29,7 +29,8 @@ fit_one_xgb(
 
 \item{verbose}{0 = silent, 1 = display performance, 2 = more verbose.}
 
-\item{weight}{a vector of observation-level weights, one per line of the training set.}
+\item{weight}{a vector of observation-level weights, one per line of the
+training set.}
 
 \item{threads}{number of paralel threads used to fit each model. This is set
 to 1 by default to avoid conflict with parallelisation per resample (in
@@ -39,8 +40,8 @@ fitting only one model.}
 \item{...}{other parameters passed to `xgboost::xgb.Train()``}
 }
 \value{
-The input object (a tibble of class \code{resamples}) with an
-additional column called \code{model} containing the fitted model object.
+The input object (a tibble of class \code{resamples}) with an additional
+column called \code{model} containing the fitted model object.
 }
 \description{
 This is the "workhorse" function called by the different methods of xgb_fit.

@@ -1,8 +1,7 @@
 #' Fit an xgboost model for each row of a `resamples` object
 #'
-#' @param object of class `resamples` (created by a `resample_***()` function) or
-#'   of class `resamples_grid` (created by `param_grid()`).
-#' @param ... passed to `fit_one_xgb()` and then later to `xgboost::xgb.Train()`
+#' @param object of class `resamples` (created by a `resample_***()` function)
+#'   or of class `resamples_grid` (created by `param_grid()`).
 #' @param cores number of cores over which to distribute resamples for parallel
 #'   processing.
 #' @param threads number of threads used to fit each model in parallel.
@@ -10,6 +9,8 @@
 #'   small resamples, parallelising over cores is likely more efficient. When
 #'   fitting few (sometimes even one) model or when each model is very big,
 #'   parallelising each fit through threads is likely more efficient.
+#' @param ... passed to `fit_one_xgb()` and then later to
+#'   `xgboost::xgb.Train()`.
 #'
 #' @inherit fit_one_xgb return
 #'

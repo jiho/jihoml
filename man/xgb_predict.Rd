@@ -14,41 +14,37 @@ xgb_predict(
 )
 }
 \arguments{
-\item{object}{an object output by \code{xgb_fit()}, which contains a \code{model} column.}
+\item{object}{an object output by \code{xgb_fit()}, which contains a \code{model}
+column.}
 
 \item{newdata}{data.frame to predict, with the same variables as those used
-for fitting (and possibly others). When NULL, predict the
-validation data for each resample.}
+for fitting (and possibly others). When NULL, predict the validation data
+for each resample.}
 
-\item{niter}{number of boosting iterations to use in the prediction.
-Maps to the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Booster()}.
-\code{niter}=0 or NULL means use all boosting rounds. Other values
-are equivalent to what is set in \code{nrounds} in \code{\link[=xgb_fit]{xgb_fit()}}.}
+\item{niter}{number of boosting iterations to use in the prediction. Maps to
+the last bound of \code{iterationrange} in \code{xgboost::predict.xgb.Booster()}.
+\code{niter}=0 or NULL means use all boosting rounds. Other values are
+equivalent to what is set in \code{nrounds} in \code{\link[=xgb_fit]{xgb_fit()}}.}
 
 \item{fns}{a named list of summary functions, to compute over the predictions
-of each observation, across resamples (when there are more than one). If NULL, return all
-predictions. If "auto", the default, choose a function appropriate
-for the type of response variable: \code{\link[base:mean]{base::mean()}} for a numeric,
-continuous variable; \code{\link[=majority_vote]{majority_vote()}} for a factor.}
+of each observation, across resamples (when there are more than one). If
+NULL, return all predictions. If "auto", the default, choose a function
+appropriate for the type of response variable: \code{\link[base:mean]{base::mean()}} for a
+numeric, continuous variable; \code{\link[=majority_vote]{majority_vote()}} for a factor.}
 
 \item{add_data}{boolean, whether to add the original data to the output
-(defaults to TRUE which is practical to compute performance
-metrics).}
+(defaults to TRUE which is practical to compute performance metrics).}
 
 \item{...}{passed to xgboost::predict.xgb.Booster()}
 }
 \value{
-A tibble with columns
+A tibble with the grouping columns in \code{object} (ungroup the object
+before \code{xgb_predict()} if this is not the desired behaviour) and the
+prediction as
 \itemize{
-\item the grouping columns in \code{object}. Ungroup the object before \code{xgb_predict()}
-if this is not the desired behaviour.
-\item the predictions as
-\itemize{
-\item \verb{pred_***} where *** is a summary function (e.g. mean),
-or
-\item \code{pred} when no summary function is chosen.
-}
-\item the original data if \code{add_data} is TRUE.
+\item \verb{pred_***} where *** is a summary function (e.g. mean), or
+\item \code{pred} when no summary function is chosen. - the original data if
+\code{add_data} is TRUE.
 }
 }
 \description{

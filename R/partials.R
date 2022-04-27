@@ -124,6 +124,7 @@ partials <- function(object, expl, ...) {
 #'   (`spr`) according to the functions in `fns`.
 #'
 #' @export
+#' @importFrom rlang .data
 #'
 #' @family partial dependence plots functions
 #' @inherit partials examples
@@ -131,7 +132,7 @@ summarise_partials <- function(object, fns=list(location=mean, spread=stats::sd)
   df <- dplyr::bind_rows(object$partial, .id="id") %>%
     # force variable to be in the order they were specified when computing the pdp
     # NB: allows to start by the most important variable
-    dplyr::mutate(variable=factor(variable, levels=unique(variable)))
+    dplyr::mutate(variable=factor(.data$variable, levels=unique(.data$variable)))
 
   if (!is.null(fns)) {
     # check consistency
@@ -141,8 +142,9 @@ summarise_partials <- function(object, fns=list(location=mean, spread=stats::sd)
 
     # compute summaries
     df <- df %>%
-      dplyr::group_by(variable, value) %>%
-      dplyr::summarise(yhat_loc=fns$location(yhat), yhat_spr=fns$spread(yhat), .groups="drop")
+      dplyr::group_by(.data$variable, .data$value) %>%
+      dplyr::summarise(yhat_loc=fns$location(.data$yhat),
+                       yhat_spr=fns$spread(.data$yhat), .groups="drop")
   }
 
   return(df)
@@ -160,6 +162,7 @@ summarise_partials <- function(object, fns=list(location=mean, spread=stats::sd)
 #' @returns A ggplot2 object.
 #'
 #' @export
+#' @importFrom rlang .data
 #' @import ggplot2
 #'
 #' @family partial dependence plots functions
@@ -173,7 +176,7 @@ plot_partials <- function(object, fns=list(location=mean, spread=stats::sd), rug
   if (is.null(fns)) {
     # plot lines
     p <- ggplot(df)  +
-      geom_path(aes(x=value, y=yhat, group=id),
+      geom_path(aes(x=.data$value, y=.data$yhat, group=.data$id),
                 alpha=1/log(length(unique(df$id))+1))
     # NB: use a heuristic to find an appropriate transparency
     # TODO use the .data pronoun to avoid the note in R CMD CHECK
@@ -181,8 +184,8 @@ plot_partials <- function(object, fns=list(location=mean, spread=stats::sd), rug
   } else {
     # plot ribbon for spread and line for location
     p <- ggplot(df) +
-      geom_ribbon(aes(x=value, ymin=yhat_loc-yhat_spr, ymax=yhat_loc+yhat_spr), alpha=0.4) +
-      geom_path(aes(x=value, y=yhat_loc))
+      geom_ribbon(aes(x=.data$value, ymin=.data$yhat_loc-.data$yhat_spr, ymax=.data$yhat_loc+.data$yhat_spr), alpha=0.4) +
+      geom_path(aes(x=.data$value, y=.data$yhat_loc))
   }
 
   if (rug) {
@@ -191,7 +194,7 @@ plot_partials <- function(object, fns=list(location=mean, spread=stats::sd), rug
 
     # add the rug to the plot
     n_unique <- max(table(var_values$variable))
-    p <- p + geom_rug(aes(x=value), data=var_values, alpha=1/log10(n_unique+1))
+    p <- p + geom_rug(aes(x=.data$value), data=var_values, alpha=1/log10(n_unique+1))
     # NB: use a heuristic to find an appropriate transparency
   }
 

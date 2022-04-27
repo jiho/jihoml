@@ -30,6 +30,7 @@ cm <- confusion_matrix
 #' @returns A ggplot object showing a heatmap with true values in lines and
 #'   predicted values in columns.
 #' @export
+#' @importFrom rlang .data
 #' @examples
 #' res <- mutate(mtcars, cyl=factor(cyl)) %>%
 #'   resample_split(p=0.5) %>%
@@ -39,7 +40,7 @@ cm <- confusion_matrix
 plot.cm <- function(x, trans="log1p", ...) {
   as.data.frame(x) %>%
     ggplot() +
-    geom_raster(aes(x=pred, y=true, alpha=Freq), fill="darkblue") +
+    geom_raster(aes(x=.data$pred, y=.data$true, alpha=.data$Freq), fill="darkblue") +
     scale_alpha_continuous(trans=trans, range=c(0,1), guide="none") +
     coord_fixed() +
     scale_x_discrete(expand=c(0,0), position="top") +

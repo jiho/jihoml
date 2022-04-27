@@ -38,18 +38,19 @@ importance <- function(object, cores=1, ...) {
 #' @returns A data.frame with variables and the mean and sd of their importance metrics.
 #'
 #' @export
+#' @importFrom rlang .data
 #' @family variable importance functions
 #' @inherit importance examples
 summarise_importance <- function(object) {
   dplyr::bind_rows(object$importance) %>%
     # compute average and sd of
-    dplyr::group_by(Feature) %>%
+    dplyr::group_by(.data$Feature) %>%
     dplyr::summarise(dplyr::across(.fns=c(mean=mean, sd=stats::sd))) %>%
     # TODO allow to use other functions like other summary approaches
-    ungroup() %>%
+    dplyr::ungroup() %>%
     # force display of variables in descending order
-    dplyr::arrange(Gain_mean) %>%
-    dplyr::mutate(Feature=factor(Feature, levels=Feature))
+    dplyr::arrange(.data$Gain_mean) %>%
+    dplyr::mutate(Feature=factor(.data$Feature, levels=.data$Feature))
 }
 
 #' Plot variable importance
@@ -59,6 +60,7 @@ summarise_importance <- function(object) {
 #' @returns A ggplot2 object.
 #'
 #' @export
+#' @importFrom rlang .data
 #' @import ggplot2
 #' @family variable importance functions
 #' @inherit importance examples
@@ -66,9 +68,9 @@ plot_importance <- function(object) {
   summarise_importance(object) %>%
     # plot
     ggplot() +
-      geom_col(aes(y=Feature, x=Gain_mean)) +
-      geom_errorbarh(aes(y=Feature,
-                         xmin=Gain_mean-Gain_sd,
-                         xmax=Gain_mean+Gain_sd), height = 0.3) +
+      geom_col(aes(y=.data$Feature, x=.data$Gain_mean)) +
+      geom_errorbarh(aes(y=.data$Feature,
+                         xmin=.data$Gain_mean-.data$Gain_sd,
+                         xmax=.data$Gain_mean+.data$Gain_sd), height = 0.3) +
     labs(x="Mean+/-SD gain")
 }

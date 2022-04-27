@@ -51,23 +51,23 @@ classification_report <- function(pred, true, exclude=NULL) {
   cr$class <- as.character(cr$class)
 
   # add global stats
-  global <- bind_rows(
+  global <- dplyr::bind_rows(
     data.frame(class="accuracy", n=NA, precision=accuracy, recall=accuracy, f1=accuracy),
     data.frame(class="avg", t(apply(cr[,-(1:2)], 2, mean))),
-    data.frame(class="wgtd avg", t(apply(cr[,-(1:2)], 2, weighted.mean, w=cr$n)))
+    data.frame(class="wgtd avg", t(apply(cr[,-(1:2)], 2, stats::weighted.mean, w=cr$n)))
   )
 
   if (length(exclude) > 0) {
     cre <- cr[!cr$class %in% exclude,]
-    global <- bind_rows(
+    global <- dplyr::bind_rows(
       global,
       data.frame(class="excl* avg", t(apply(cre[,-(1:2)], 2, mean))),
-      data.frame(class="excl* wgtd avg", t(apply(cre[,-(1:2)], 2, weighted.mean, w=cre$n))),
+      data.frame(class="excl* wgtd avg", t(apply(cre[,-(1:2)], 2, stats::weighted.mean, w=cre$n))),
     )
     cr[cr$class %in% exclude,"class"] <- paste0(cr[cr$class %in% exclude,"class"], "*")
   }
 
-  cr <- bind_rows(global, cr)
+  cr <- dplyr::bind_rows(global, cr)
   class(cr) <- c("cr", class(cr))
   return(cr)
 }

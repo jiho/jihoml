@@ -165,8 +165,14 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
       # determine which function to use automatically
       preds <- preds %>%
         dplyr::summarise(
-          dplyr::across(.cols=where(is.numeric), .fns=list(mean=mean)),
-          dplyr::across(.cols=where(is.factor), .fns=list(maj=majority_vote))
+          dplyr::across(
+            .cols=tidyselect::vars_select_helpers$where(is.numeric),
+            .fns=list(mean=mean)
+          ),
+          dplyr::across(
+            .cols=tidyselect::vars_select_helpers$where(is.factor),
+            .fns=list(maj=majority_vote)
+          )
         )
     }
   }

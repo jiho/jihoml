@@ -29,7 +29,7 @@ ref_stats <- regression_metrics(pred$pred, pred$mpg)
 ref_stats
 
 # Now define permutations of the training set and compute the stats for each
-rs_perm <- replicate(rs, n=500) \%>\% permute(resp="mpg")
+rs_perm <- replicate(rs, n=100) \%>\% permute(resp="mpg")
 rs_perm_fitted <- rs_perm \%>\% xgb_fit(resp="mpg", expl=c("cyl", "hp", "qsec"),
     eta=0.1, max_depth=6, nrounds=50)
 pred <- group_by(rs_perm_fitted, replic) \%>\%

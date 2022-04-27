@@ -119,12 +119,12 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
       dplyr::rowwise(.data) %>% dplyr::do({
         if (predict_val) {
           # with no new data, predict the validation data
-          newdata <- data.frame(.data$val, check.names=FALSE)[.data$model$feature_names] %>% as.matrix()
+          newdata <- data.frame(.data$val, check.names=FALSE)[.data$model$feature_names]
           # and keep track of which rows of the original data that corresponds to
           rows <- as.integer(.data$val)
         } else {
           # predict the new data in its entirety (and therefore all its rows)
-          newdata <- data.frame(newdata, check.names=FALSE)[.data$model$feature_names] %>% as.matrix()
+          newdata <- data.frame(newdata, check.names=FALSE)[.data$model$feature_names]
           rows <- 1:nrow(newdata)
         }
 
@@ -133,7 +133,7 @@ xgb_predict <- function(object, newdata=NULL, niter=NULL,
         if (is.null(niter)) {niter <- 0}
         pred <- stats::predict(
           .data$model,
-          newdata=newdata,
+          newdata=data.matrix(newdata),
           iterationrange=c(1,niter+1),
           reshape=TRUE
         )

@@ -66,7 +66,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     num_class <- NULL
   }
   dTrain <- xgboost::xgb.DMatrix(
-    data =as.matrix(train[expl]),
+    data =data.matrix(train[expl]),
     label=train[[resp]],
     # use mono-core here, by default
     # we will parallelise at a higher level
@@ -88,7 +88,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     }
     val_list <- list(
       val = xgboost::xgb.DMatrix(
-        data =as.matrix(val[expl]),
+        data =data.matrix(val[expl]),
         label=val[[resp]],
         nthread=nthread
       )

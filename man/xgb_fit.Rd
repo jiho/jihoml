@@ -6,11 +6,11 @@
 \alias{xgb_fit.resamples_grid}
 \title{Fit an xgboost model for each row of a \code{resamples} object}
 \usage{
-xgb_fit(object, ...)
+xgb_fit(object, cores = 1, threads = 1, ...)
 
-\method{xgb_fit}{resamples}(object, cores = 1, ...)
+\method{xgb_fit}{resamples}(object, cores = 1, threads = 1, ...)
 
-\method{xgb_fit}{resamples_grid}(object, cores = 1, ...)
+\method{xgb_fit}{resamples_grid}(object, cores = 1, threads = 1, ...)
 }
 \arguments{
 \item{object}{of class \code{resamples} (created by a \verb{resample_***()} function) or
@@ -19,6 +19,12 @@ of class \code{resamples_grid} (created by \code{param_grid()}).}
 \item{...}{passed to \code{fit_one_xgb()} and then later to \code{xgboost::xgb.Train()}}
 
 \item{cores}{integer, number of cores to use for parallel computation.}
+
+\item{threads}{number of threads used to fit each model in parallel.
+\code{threads} cannot be >1 when \code{cores}>1. When fitting models over many rather
+small resamples, parallelising over cores is likely more efficient. When
+fitting few (sometimes even one) model or when each model is very big,
+parallelising each fit through threads is likely more efficient.}
 }
 \value{
 The input object (a tibble of class \code{resamples}) with an

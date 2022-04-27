@@ -12,7 +12,7 @@ fit_one_xgb(
   nrounds,
   verbose = 0,
   weight = NULL,
-  nthread = 1,
+  threads = 1,
   ...
 )
 }
@@ -31,10 +31,10 @@ fit_one_xgb(
 
 \item{weight}{a vector of observation-level weights, one per line of the training set.}
 
-\item{nthread}{number of threads (cores) used to fir each model. This is set
-to one by default to avoid conflict with parallelisation per resample (in
-\code{\link[=xgb_fit]{xgb_fit()}} which is more efficient). Set this to more than 1 when fitting
-only one model.}
+\item{threads}{number of paralel threads used to fit each model. This is set
+to 1 by default to avoid conflict with parallelisation per resample (in
+\code{\link[=xgb_fit]{xgb_fit()}}), which is often more efficient. Set this to more than 1 when
+fitting only one model.}
 
 \item{...}{other parameters passed to `xgboost::xgb.Train()``}
 }

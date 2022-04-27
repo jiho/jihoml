@@ -9,10 +9,10 @@
 #' @param nrounds number of boosting rounds (i.e. number of trees).
 #' @param verbose 0 = silent, 1 = display performance, 2 = more verbose.
 #' @param weight a vector of observation-level weights, one per line of the training set.
-#' @param nthread number of threads (cores) used to fir each model. This is set
-#' to one by default to avoid conflict with parallelisation per resample (in
-#' [`xgb_fit()`] which is more efficient). Set this to more than 1 when fitting
-#' only one model.
+#' @param threads number of paralel threads used to fit each model. This is set
+#'   to 1 by default to avoid conflict with parallelisation per resample (in
+#'   [`xgb_fit()`]), which is often more efficient. Set this to more than 1 when
+#'   fitting only one model.
 #' @param ... other parameters passed to `xgboost::xgb.Train()``
 #'
 #' @returns The input object (a tibble of class `resamples`) with an
@@ -49,7 +49,7 @@
 #' m$model[[1]]$params
 #' m_list$model[[1]]$params
 fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
-                        weight=NULL, nthread=1, ...) {
+                        weight=NULL, threads=1, ...) {
   # TODO Add checks for arguments
 
   # extract training set, in dMatrix form, for xgboost
@@ -70,7 +70,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     label=train[[resp]],
     # use mono-core here, by default
     # we will parallelise at a higher level
-    nthread=nthread
+    nthread=threads
   )
   if (!is.null(weight)) {
     xgboost::setinfo(dTrain, "weight", weight[as.integer(object$train[[1]])])
@@ -90,7 +90,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
       val = xgboost::xgb.DMatrix(
         data =data.matrix(val[expl]),
         label=val[[resp]],
-        nthread=nthread
+        nthread=threads
       )
     )
   }
@@ -100,7 +100,7 @@ fit_one_xgb <- function(object, resp, expl, params=list(), nrounds, verbose=0,
     params=c(params, num_class=num_class), nrounds=nrounds,
     watchlist=val_list,
     verbose=verbose,
-    nthread=nthread,
+    nthread=threads,
     ...
   )
   if (classif) {

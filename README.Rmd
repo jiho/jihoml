@@ -1,8 +1,8 @@
 ---
 output: 
   md_document:
-    fig_height: 2
-    fig_width: 3
+    fig_height: 3
+    fig_width: 5
     variant: gfm
   html_document:
     fig_height: 3
@@ -10,7 +10,7 @@ output:
 ---
 
 ```{r options, echo=FALSE}
-knitr::opts_chunk$set(comment="#", tidy=FALSE, cache=TRUE)
+knitr::opts_chunk$set(comment="#", tidy=FALSE)
 ```
 # Utilities for Machine Learning 
 

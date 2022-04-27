@@ -10,21 +10,6 @@ remotes::install_github("jiho/jihoml")
 library("jihoml")
 ```
 
-    # Loading required package: dplyr
-
-    # 
-    # Attaching package: 'dplyr'
-
-    # The following objects are masked from 'package:stats':
-    # 
-    #     filter, lag
-
-    # The following objects are masked from 'package:base':
-    # 
-    #     intersect, setdiff, setequal, union
-
-    # Loading required package: ggplot2
-
 ## Principles
 
 Setting up a machine learning model involves:
@@ -212,7 +197,7 @@ system.time(
 ```
 
     #    user  system elapsed 
-    #  61.285   2.027  12.460
+    #  59.636   1.612  10.650
 
 Examine the decrease in the fit metric (RMSE here) according to the
 various hyperparameters: `eta`, `max_depth` but also `niter`, the number

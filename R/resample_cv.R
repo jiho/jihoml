@@ -5,8 +5,8 @@
 #'
 #' @return A vector of length n, containing a integer in 1:k = the fold identifier
 #' @examples
-#' joml:::split_in_folds(k=3, n=10)
-#' table(joml:::split_in_folds(k=3, n=100))
+#' jihoml:::split_in_folds(k=3, n=10)
+#' table(jihoml:::split_in_folds(k=3, n=100))
 split_in_folds <- function(n, k) {
   times <- ceiling(n/k)
   sample(rep.int(1:k, times), size=n)

@@ -18,6 +18,6 @@ A vector of length n, containing a integer in 1:k = the fold identifier
 Split n items into k folds
 }
 \examples{
-joml:::split_in_folds(k=3, n=10)
-table(joml:::split_in_folds(k=3, n=100))
+jihoml:::split_in_folds(k=3, n=10)
+table(jihoml:::split_in_folds(k=3, n=100))
 }

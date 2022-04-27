@@ -1,7 +1,7 @@
 Package: jihoml
 Type: Package
 Title: Utilities for Machine Learning
-Version: 0.1.0
+Version: 0.2.0
 Author: Jean-Olivier Irisson
 Maintainer: Jean-Olivier Irisson <irisson@normalesup.org>
 Description: Create various stratified resamples to estimate the quality of ML

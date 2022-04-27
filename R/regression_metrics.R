@@ -16,7 +16,7 @@ regression_metrics <- function(pred, true) {
     MAE  = MLmetrics::MAE(pred, true),
     R2   = MLmetrics::R2_Score(pred, true) * 100,
     R2_correl     = stats::cor(pred, true)^2 * 100,
-    R2_correl_log = stats::cor(log1p(pred), log1p(true))^2 * 100
+    R2_correl_log1p = stats::cor(log1p(pred), log1p(true))^2 * 100
   )
 }
 

@@ -13,6 +13,10 @@
 #'   xgb_predict(fns=NULL)
 #' confusion_matrix(res$pred, res$cyl)
 confusion_matrix <- function(pred, true) {
+  # make sure the factor levels are the same
+  levels <- unique(c(pred, true))
+  pred <- factor(pred, levels=levels)
+  true <- factor(true, levels=levels)
   cm <- table(true=true, pred=pred)
   class(cm) <- c("cm", class(cm))
   return(cm)
